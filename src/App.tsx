@@ -19,6 +19,7 @@ import { UsersManagement } from './components/UsersManagement';
 const AppContent: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!isAuthenticated) {
     return <LoginForm />;
@@ -59,15 +60,25 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       
-      <div className="flex flex-col sm:flex-row">
+      <div className="flex">
+        {/* Mobile overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
         <Sidebar
           activeView={activeView}
           onViewChange={setActiveView}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
         
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full sm:w-auto">
+        <main className="flex-1 p-4 lg:p-6 min-w-0">
           {renderContent()}
         </main>
       </div>

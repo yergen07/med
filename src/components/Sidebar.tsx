@@ -8,16 +8,19 @@ import {
   Users,
   FileText,
   Plus,
-  ArrowRightLeft
+  ArrowRightLeft,
+  X
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
   activeView: string;
   onViewChange: (view: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, isOpen, onClose }) => {
   const { user } = useAuth();
 
   const adminNavigation = [
@@ -44,26 +47,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
 
   const navigation = user?.role === 'admin' ? adminNavigation : managerNavigation;
 
+  const handleItemClick = (id: string) => {
+    onViewChange(id);
+    onClose(); // Close sidebar on mobile after selection
+  };
   return (
-    <div className="bg-white w-full sm:w-64 min-h-screen shadow-sm border-r border-gray-100 fixed sm:relative z-30 sm:z-auto">
-      <div className="p-3 sm:p-6">
+    <div className={`bg-white w-64 min-h-screen shadow-sm border-r border-gray-100 fixed lg:relative z-50 lg:z-auto transform transition-transform duration-300 ease-in-out ${
+      isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+    }`}>
+      <div className="p-6">
+        {/* Mobile close button */}
+        <div className="flex justify-end lg:hidden mb-4">
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        
         <nav className="space-y-1">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
-                onClick={() => onViewChange(item.id)}
+                onClick={() => handleItemClick(item.id)}
                 className={`${
                   activeView === item.id
                     ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                } group flex items-center px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 w-full text-left`}
+                } group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 w-full text-left`}
               >
                 <Icon
                   className={`${
                     activeView === item.id ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                  } mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200`}
+                  } mr-3 h-5 w-5 transition-colors duration-200`}
                 />
                 <span className="truncate">{item.name}</span>
               </button>
@@ -73,9 +92,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
 
         {/* Quick stats for managers */}
         {user?.role === 'manager' && (
-          <div className="mt-4 sm:mt-8 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+          <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Быстрая статистика</h3>
-            <div className="space-y-2 text-xs sm:text-sm">
+            <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Товаров в наличии:</span>
                 <span className="font-medium text-gray-900">-</span>

@@ -1,8 +1,12 @@
 import React from 'react';
-import { LogOut, User, Package } from 'lucide-react';
+import { LogOut, User, Package, Menu } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
 
   const getRoleText = (role: string) => {
@@ -11,22 +15,30 @@ export const Header: React.FC = () => {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-10">
-      <div className="w-full px-2 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
+      <div className="w-full px-4 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Mobile menu button */}
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+          
           {/* Logo */}
-          <div className="flex items-center min-w-0">
+          <div className="flex items-center min-w-0 lg:ml-0 ml-2">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-              <Package className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+              <Package className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
-            <div className="ml-2 sm:ml-3 min-w-0">
-              <h1 className="text-sm sm:text-xl font-bold text-gray-900 truncate">InventoryPro</h1>
-              <p className="text-xs text-gray-500 hidden sm:block">Система учета товаров</p>
+            <div className="ml-3 min-w-0">
+              <h1 className="text-lg lg:text-xl font-bold text-gray-900 truncate">InventoryPro</h1>
+              <p className="text-xs text-gray-500 hidden lg:block">Система учета товаров</p>
             </div>
           </div>
 
           {/* User info and actions */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="hidden sm:flex items-center space-x-3">
+          <div className="flex items-center space-x-2 lg:space-x-4">
+            <div className="hidden md:flex items-center space-x-3">
               <div className="bg-gray-100 p-2 rounded-lg">
                 <User className="h-5 w-5 text-gray-600" />
               </div>
@@ -38,10 +50,10 @@ export const Header: React.FC = () => {
             
             <button
               onClick={logout}
-              className="inline-flex items-center px-2 py-2 sm:px-3 border border-transparent text-xs sm:text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Выйти</span>
+              <span className="hidden md:inline">Выйти</span>
             </button>
           </div>
         </div>
